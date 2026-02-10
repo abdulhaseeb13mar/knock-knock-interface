@@ -1,21 +1,58 @@
 import { RootLayout } from "./layouts/RootLayout";
-import HomePage from "./pages/home";
-import { createRootRoute, createRoute, createRouter } from "@tanstack/react-router";
+import { isAuthenticated } from "./lib/auth";
+import DashboardPage from "./pages/dashboard";
+import GmailSuccessPage from "./pages/gmail-success";
+import LoginPage from "./pages/login";
+import RegisterPage from "./pages/register";
+import { createRootRoute, createRoute, createRouter, redirect } from "@tanstack/react-router";
 
 // Create Root Route
 const rootRoute = createRootRoute({
   component: RootLayout,
 });
 
-// Create Routes
-const indexRoute = createRoute({
+// ── Public routes ───────────────────────────────────────────────────
+
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/login",
+  component: LoginPage,
+  beforeLoad: () => {
+    if (isAuthenticated()) throw redirect({ to: "/" });
+  },
+});
+
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/register",
+  component: RegisterPage,
+  beforeLoad: () => {
+    if (isAuthenticated()) throw redirect({ to: "/" });
+  },
+});
+
+// ── Protected routes ────────────────────────────────────────────────
+
+function requireAuth() {
+  if (!isAuthenticated()) throw redirect({ to: "/login" });
+}
+
+const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: HomePage,
+  component: DashboardPage,
+  beforeLoad: requireAuth,
+});
+
+const gmailSuccessRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/integrations/gmail/success",
+  component: GmailSuccessPage,
+  beforeLoad: requireAuth,
 });
 
 // Create Route Tree
-const routeTree = rootRoute.addChildren([indexRoute]);
+const routeTree = rootRoute.addChildren([loginRoute, registerRoute, dashboardRoute, gmailSuccessRoute]);
 
 // Create Router
 export const router = createRouter({
