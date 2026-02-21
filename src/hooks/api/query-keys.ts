@@ -11,4 +11,7 @@ export const queryKeys = {
   jobs: {
     status: (jobId: string) => ["jobs", jobId, "status"] as const,
   },
+  gmail: {
+    status: ["gmail", "status"] as const,
+  },
 } as const;
