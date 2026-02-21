@@ -1,0 +1,14 @@
+export const queryKeys = {
+  ai: {
+    providers: ["ai", "providers"] as const,
+  },
+  recipients: {
+    all: ["recipients"] as const,
+  },
+  emails: {
+    sent: ["emails", "sent"] as const,
+  },
+  jobs: {
+    status: (jobId: string) => ["jobs", jobId, "status"] as const,
+  },
+} as const;

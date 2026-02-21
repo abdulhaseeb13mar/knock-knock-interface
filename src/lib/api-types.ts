@@ -51,6 +51,7 @@ export interface EmailJob {
   failedCount: number;
   startedAt: string;
   completedAt?: string | null;
+  pauseReason?: string | null;
 }
 
 export type StartJobResponse = EmailJob | { message: string };

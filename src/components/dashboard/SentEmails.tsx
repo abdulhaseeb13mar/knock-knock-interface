@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { api } from "@/lib/api-client";
-import type { SentEmail } from "@/lib/api-types";
+import { useSentEmailsQuery } from "@/hooks/api";
 import { MailCheck } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SentEmails() {
-  const [emails, setEmails] = useState<SentEmail[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data: emails = [], isLoading: loading, isError } = useSentEmailsQuery();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    api
-      .get<SentEmail[]>("/emails/sent")
-      .then(setEmails)
-      .catch(() => toast.error("Failed to load sent emails"))
-      .finally(() => setLoading(false));
-  }, []);
+    if (isError) {
+      toast.error("Failed to load sent emails");
+    }
+  }, [isError]);
 
   return (
     <div className="space-y-4">
@@ -45,20 +40,20 @@ export default function SentEmails() {
             </TableHeader>
             <TableBody>
               {emails.map((e) => (
-                <>
-                  <TableRow key={e.id} className="cursor-pointer" onClick={() => setExpandedId(expandedId === e.id ? null : e.id)}>
+                <Fragment key={e.id}>
+                  <TableRow className="cursor-pointer" onClick={() => setExpandedId(expandedId === e.id ? null : e.id)}>
                     <TableCell>{e.recipientEmail}</TableCell>
                     <TableCell>{e.subject}</TableCell>
                     <TableCell className="text-xs">{new Date(e.sentAt).toLocaleString()}</TableCell>
                   </TableRow>
                   {expandedId === e.id && (
-                    <TableRow key={`${e.id}-body`}>
+                    <TableRow>
                       <TableCell colSpan={3} className="text-sm text-muted-foreground whitespace-pre-wrap bg-muted/30">
                         {e.body}
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </Fragment>
               ))}
             </TableBody>
           </Table>

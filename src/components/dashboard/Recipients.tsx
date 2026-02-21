@@ -1,46 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ApiError, api } from "@/lib/api-client";
-import type { ImportResponse, Recipient } from "@/lib/api-types";
+import { useImportRecipientsMutation, useRecipientsQuery } from "@/hooks/api";
+import { ApiError } from "@/lib/api-client";
 import { Upload, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Recipients() {
-  const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [importing, setImporting] = useState(false);
-
-  const fetchRecipients = useCallback(() => {
-    setLoading(true);
-    api
-      .get<Recipient[]>("/recipients")
-      .then(setRecipients)
-      .catch(() => toast.error("Failed to load recipients"))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: recipients = [], isLoading: loading, isError } = useRecipientsQuery();
+  const importRecipientsMutation = useImportRecipientsMutation();
 
   useEffect(() => {
-    fetchRecipients();
-  }, [fetchRecipients]);
+    if (isError) {
+      toast.error("Failed to load recipients");
+    }
+  }, [isError]);
 
   async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setImporting(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await api.upload<ImportResponse>("/recipients/import", fd);
+      const res = await importRecipientsMutation.mutateAsync(fd);
       toast.success(`Imported ${res.imported} recipients`);
-      fetchRecipients();
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Import failed");
     } finally {
-      setImporting(false);
       e.target.value = "";
     }
   }
@@ -61,10 +50,10 @@ export default function Recipients() {
         </div>
         <label>
           <Input type="file" accept=".csv" className="hidden" onChange={handleImport} />
-          <Button asChild variant="outline" disabled={importing}>
+          <Button asChild variant="outline" disabled={importRecipientsMutation.isPending}>
             <span className="cursor-pointer">
               <Upload className="size-4 mr-1" />
-              {importing ? "Importing…" : "Import CSV"}
+              {importRecipientsMutation.isPending ? "Importing…" : "Import CSV"}
             </span>
           </Button>
         </label>

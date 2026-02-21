@@ -2,14 +2,14 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ApiError, api } from "@/lib/api-client";
-import type { ResumeUploadResponse } from "@/lib/api-types";
+import { useResumeUploadMutation } from "@/hooks/api";
+import { ApiError } from "@/lib/api-client";
 import { FileText, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ResumeUpload() {
-  const [uploading, setUploading] = useState(false);
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
+  const resumeUploadMutation = useResumeUploadMutation();
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -19,17 +19,15 @@ export default function ResumeUpload() {
       e.target.value = "";
       return;
     }
-    setUploading(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await api.upload<ResumeUploadResponse>("/users/resume", fd);
+      const res = await resumeUploadMutation.mutateAsync(fd);
       setUploadedPath(res.path);
       toast.success("Resume uploaded");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Upload failed");
     } finally {
-      setUploading(false);
       e.target.value = "";
     }
   }
@@ -44,10 +42,10 @@ export default function ResumeUpload() {
 
       <label>
         <Input type="file" accept=".pdf,application/pdf" className="hidden" onChange={handleUpload} />
-        <Button asChild variant="outline" disabled={uploading}>
+        <Button asChild variant="outline" disabled={resumeUploadMutation.isPending}>
           <span className="cursor-pointer">
             <Upload className="size-4 mr-1" />
-            {uploading ? "Uploading…" : "Upload PDF"}
+            {resumeUploadMutation.isPending ? "Uploading…" : "Upload PDF"}
           </span>
         </Button>
       </label>

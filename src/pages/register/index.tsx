@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, api } from "@/lib/api-client";
-import type { AuthResponse } from "@/lib/api-types";
+import { useRegisterMutation } from "@/hooks/api";
+import { ApiError } from "@/lib/api-client";
 import { setToken } from "@/lib/auth";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const registerMutation = useRegisterMutation();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,9 +22,8 @@ export default function RegisterPage() {
       toast.error("Password must be at least 8 characters");
       return;
     }
-    setLoading(true);
     try {
-      const res = await api.post<AuthResponse>("/auth/register", {
+      const res = await registerMutation.mutateAsync({
         email,
         password,
       });
@@ -32,8 +31,6 @@ export default function RegisterPage() {
       navigate({ to: "/" });
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Registration failed");
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -62,8 +59,8 @@ export default function RegisterPage() {
                 placeholder="Min 8 characters"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account…" : "Create Account"}
+            <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
+              {registerMutation.isPending ? "Creating account…" : "Create Account"}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">

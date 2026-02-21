@@ -1,18 +1,19 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ApiError, api } from "@/lib/api-client";
-import type { GmailConnectResponse } from "@/lib/api-types";
+import { useGmailConnectMutation } from "@/hooks/api";
+import { ApiError } from "@/lib/api-client";
 import { Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function GmailConnect() {
   const [loading, setLoading] = useState(false);
+  const gmailConnectMutation = useGmailConnectMutation();
 
   async function handleConnect() {
     setLoading(true);
     try {
-      const res = await api.get<GmailConnectResponse>("/integrations/gmail/connect");
+      const res = await gmailConnectMutation.mutateAsync();
       window.location.href = res.url;
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Failed to connect Gmail");
