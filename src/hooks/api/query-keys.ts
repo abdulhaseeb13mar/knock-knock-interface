@@ -1,6 +1,7 @@
 export const queryKeys = {
   ai: {
     providers: ["ai", "providers"] as const,
+    keys: ["ai", "keys"] as const,
   },
   recipients: {
     all: ["recipients"] as const,

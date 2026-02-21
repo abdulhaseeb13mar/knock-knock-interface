@@ -49,6 +49,12 @@ export const api = {
       body: body != null ? JSON.stringify(body) : undefined,
     }).then((r) => handleResponse<T>(r));
   },
+  delete<T>(path: string): Promise<T> {
+    return fetch(`${BASE_URL}${path}`, {
+      method: "DELETE",
+      headers: headers(),
+    }).then((r) => handleResponse<T>(r));
+  },
 
   /** For multipart/form-data uploads — caller passes FormData directly */
   upload<T>(path: string, formData: FormData): Promise<T> {

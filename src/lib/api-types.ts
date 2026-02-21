@@ -10,6 +10,11 @@ export interface GmailConnectResponse {
 
 export type AiProviderName = "openai" | "anthropic" | "grok";
 
+export interface AiKeyRecord {
+  provider: AiProviderName;
+  createdAt: string;
+}
+
 export interface SaveKeyResponse {
   success: true;
 }
