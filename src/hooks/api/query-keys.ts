@@ -15,4 +15,7 @@ export const queryKeys = {
   gmail: {
     status: ["gmail", "status"] as const,
   },
+  resumes: {
+    all: ["resumes"] as const,
+  },
 } as const;
