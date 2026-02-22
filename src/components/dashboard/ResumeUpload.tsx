@@ -47,12 +47,7 @@ export default function ResumeUpload() {
       <p className="text-sm text-muted-foreground">Save one or more public Google Drive links for your resumes.</p>
 
       <div className="flex gap-2 max-w-2xl">
-        <Input
-          type="url"
-          placeholder="https://drive.google.com/file/d/..."
-          value={sharedUrl}
-          onChange={(e) => setSharedUrl(e.target.value)}
-        />
+        <Input type="url" placeholder="https://drive.google.com/file/d/..." value={sharedUrl} onChange={(e) => setSharedUrl(e.target.value)} />
         <Button onClick={handleAddLink} disabled={saveResumeLinkMutation.isPending}>
           <Link2 className="size-4 mr-1" />
           {saveResumeLinkMutation.isPending ? "Saving…" : "Save Link"}
@@ -61,31 +56,19 @@ export default function ResumeUpload() {
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading saved links…</p>}
 
-      {!isLoading && resumes.length === 0 && (
-        <p className="text-sm text-muted-foreground">No resume links saved yet.</p>
-      )}
+      {!isLoading && resumes.length === 0 && <p className="text-sm text-muted-foreground">No resume links saved yet.</p>}
 
       {resumes.length > 0 && (
         <div className="space-y-2 max-w-3xl">
           {resumes.map((resume) => (
             <div key={resume.id} className="flex items-center justify-between gap-3 rounded-md border p-3">
               <div className="min-w-0">
-                <a
-                  href={resume.sharedUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm underline underline-offset-2 break-all"
-                >
+                <a href={resume.sharedUrl} target="_blank" rel="noreferrer" className="text-sm underline underline-offset-2 break-all">
                   {resume.sharedUrl}
                 </a>
                 <p className="text-xs text-muted-foreground">Added {new Date(resume.createdAt).toLocaleString()}</p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleDelete(resume.id)}
-                disabled={deleteResumeLinkMutation.isPending}
-              >
+              <Button variant="outline" size="sm" onClick={() => handleDelete(resume.id)} disabled={deleteResumeLinkMutation.isPending}>
                 <Trash2 className="size-4 mr-1" />
                 Delete
               </Button>

@@ -10,9 +10,13 @@ interface JobActionInput {
   action: JobAction;
 }
 
+interface StartJobInput {
+  resumeId: string;
+}
+
 export function useStartJobMutation() {
   return useMutation({
-    mutationFn: () => api.post<StartJobResponse>("/jobs/start"),
+    mutationFn: (input: StartJobInput) => api.post<StartJobResponse>("/jobs/start", input),
   });
 }
 

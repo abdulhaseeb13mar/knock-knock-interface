@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { queryKeys, useJobActionMutation, useJobStatusQuery, useStartJobMutation } from "@/hooks/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { queryKeys, useJobActionMutation, useJobStatusQuery, useResumeLinksQuery, useStartJobMutation } from "@/hooks/api";
 import { ApiError, sseUrl } from "@/lib/api-client";
 import type { EmailJob, JobSSEEvent } from "@/lib/api-types";
 import { getToken } from "@/lib/auth";
@@ -14,11 +15,21 @@ import { toast } from "sonner";
 
 export default function Jobs() {
   const [jobId, setJobId] = useState<string | null>(null);
+  const [resumeId, setResumeId] = useState<string>("");
   const ctrlRef = useRef<AbortController | null>(null);
   const queryClient = useQueryClient();
   const startJobMutation = useStartJobMutation();
   const jobActionMutation = useJobActionMutation();
+  const { data: resumes = [], isLoading: resumesLoading } = useResumeLinksQuery();
   const { data: job, refetch: refetchJobStatus } = useJobStatusQuery(jobId ?? "", Boolean(jobId));
+
+  const activeResumeId = useMemo(() => {
+    if (resumeId && resumes.some((resume) => resume.id === resumeId)) {
+      return resumeId;
+    }
+
+    return resumes[0]?.id ?? "";
+  }, [resumeId, resumes]);
 
   // Clean up SSE on unmount
   useEffect(() => {
@@ -70,8 +81,13 @@ export default function Jobs() {
   );
 
   async function handleStart() {
+    if (!activeResumeId) {
+      toast.error("Select a resume link before starting");
+      return;
+    }
+
     try {
-      const res = await startJobMutation.mutateAsync();
+      const res = await startJobMutation.mutateAsync({ resumeId: activeResumeId });
       if ("message" in res) {
         toast.info(res.message);
       } else {
@@ -124,10 +140,28 @@ export default function Jobs() {
       </div>
 
       {!job && (
-        <Button onClick={handleStart} disabled={startJobMutation.isPending}>
-          <Play className="size-4 mr-1" />
-          {startJobMutation.isPending ? "Starting…" : "Start Job"}
-        </Button>
+        <div className="space-y-3 max-w-sm">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Select resume to use for this job</p>
+            <Select value={activeResumeId} onValueChange={setResumeId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={resumesLoading ? "Loading resumes…" : "Select resume link"} />
+              </SelectTrigger>
+              <SelectContent>
+                {resumes.map((resume) => (
+                  <SelectItem key={resume.id} value={resume.id}>
+                    {resume.sharedUrl}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button onClick={handleStart} disabled={startJobMutation.isPending || !activeResumeId}>
+            <Play className="size-4 mr-1" />
+            {startJobMutation.isPending ? "Starting…" : "Start Job"}
+          </Button>
+        </div>
       )}
 
       {job && (
