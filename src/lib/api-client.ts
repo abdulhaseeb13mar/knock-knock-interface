@@ -49,6 +49,15 @@ export const api = {
       body: body != null ? JSON.stringify(body) : undefined,
     }).then((r) => handleResponse<T>(r));
   },
+
+  patch<T>(path: string, body?: unknown): Promise<T> {
+    return fetch(`${BASE_URL}${path}`, {
+      method: "PATCH",
+      headers: headers(),
+      body: body != null ? JSON.stringify(body) : undefined,
+    }).then((r) => handleResponse<T>(r));
+  },
+
   delete<T>(path: string): Promise<T> {
     return fetch(`${BASE_URL}${path}`, {
       method: "DELETE",
