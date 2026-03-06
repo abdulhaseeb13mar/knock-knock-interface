@@ -18,4 +18,8 @@ export const queryKeys = {
   resumes: {
     all: ["resumes"] as const,
   },
+  emailPromptSets: {
+    all: ["email-prompt-sets"] as const,
+    detail: (id: string) => ["email-prompt-sets", id] as const,
+  },
 } as const;
