@@ -50,6 +50,14 @@ export const api = {
     }).then((r) => handleResponse<T>(r));
   },
 
+  put<T>(path: string, body?: unknown): Promise<T> {
+    return fetch(`${BASE_URL}${path}`, {
+      method: "PUT",
+      headers: headers(),
+      body: body != null ? JSON.stringify(body) : undefined,
+    }).then((r) => handleResponse<T>(r));
+  },
+
   patch<T>(path: string, body?: unknown): Promise<T> {
     return fetch(`${BASE_URL}${path}`, {
       method: "PATCH",
