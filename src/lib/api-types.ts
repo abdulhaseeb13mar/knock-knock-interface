@@ -12,6 +12,7 @@ export type AiProviderName = "openai" | "anthropic" | "grok";
 
 export interface AiKeyRecord {
   provider: AiProviderName;
+  priority: number;
   createdAt: string;
 }
 

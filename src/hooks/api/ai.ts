@@ -30,6 +30,14 @@ export function useDeleteAiKeyMutation() {
   });
 }
 
+export function useUpdateAiKeyPriorityMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (priorities: Record<AiProviderName, number>) => api.put<{ success: true }>("/ai/keys/priority", priorities),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.ai.keys }),
+  });
+}
+
 export function useSaveAiKeyMutation() {
   const queryClient = useQueryClient();
   return useMutation({
