@@ -1,5 +1,6 @@
 import { RootLayout } from "./layouts/RootLayout";
 import { isAuthenticated } from "./lib/auth";
+import AdminPage from "./pages/admin";
 import DashboardPage from "./pages/dashboard";
 import GmailSuccessPage from "./pages/gmail-success";
 import LoginPage from "./pages/login";
@@ -51,8 +52,15 @@ const gmailSuccessRoute = createRoute({
   beforeLoad: requireAuth,
 });
 
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin",
+  component: AdminPage,
+  beforeLoad: requireAuth,
+});
+
 // Create Route Tree
-const routeTree = rootRoute.addChildren([loginRoute, registerRoute, dashboardRoute, gmailSuccessRoute]);
+const routeTree = rootRoute.addChildren([loginRoute, registerRoute, dashboardRoute, gmailSuccessRoute, adminRoute]);
 
 // Create Router
 export const router = createRouter({
