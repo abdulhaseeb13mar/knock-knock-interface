@@ -1,5 +1,5 @@
 import { RootLayout } from "./layouts/RootLayout";
-import { isAuthenticated } from "./lib/auth";
+import { isAdmin, isAuthenticated } from "./lib/auth";
 import AdminPage from "./pages/admin";
 import DashboardPage from "./pages/dashboard";
 import GmailSuccessPage from "./pages/gmail-success";
@@ -38,6 +38,11 @@ function requireAuth() {
   if (!isAuthenticated()) throw redirect({ to: "/login" });
 }
 
+function requireAdmin() {
+  if (!isAuthenticated()) throw redirect({ to: "/login" });
+  if (!isAdmin()) throw redirect({ to: "/" });
+}
+
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
@@ -56,7 +61,7 @@ const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
   component: AdminPage,
-  beforeLoad: requireAuth,
+  beforeLoad: requireAdmin,
 });
 
 // Create Route Tree
