@@ -1,5 +1,6 @@
 import AiKeys from "@/components/dashboard/AiKeys";
 import EmailPromptSets from "@/components/dashboard/EmailPromptSets";
+import GetKnocks from "@/components/dashboard/GetKnocks";
 import GmailConnect from "@/components/dashboard/GmailConnect";
 import Jobs from "@/components/dashboard/Jobs";
 import Recipients from "@/components/dashboard/Recipients";
@@ -39,6 +40,7 @@ export default function DashboardPage() {
           <TabsTrigger value="sent">Sent Emails</TabsTrigger>
           <TabsTrigger value="resume">Resume</TabsTrigger>
           <TabsTrigger value="prompts">Prompts</TabsTrigger>
+          <TabsTrigger value="get-knocks">Get Knocks</TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
@@ -62,6 +64,9 @@ export default function DashboardPage() {
           </TabsContent>
           <TabsContent value="prompts">
             <EmailPromptSets />
+          </TabsContent>
+          <TabsContent value="get-knocks">
+            <GetKnocks />
           </TabsContent>
         </div>
       </Tabs>
