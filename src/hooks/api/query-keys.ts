@@ -22,4 +22,7 @@ export const queryKeys = {
     all: ["email-prompt-sets"] as const,
     detail: (id: string) => ["email-prompt-sets", id] as const,
   },
+  users: {
+    me: ["users", "me"] as const,
+  },
 } as const;

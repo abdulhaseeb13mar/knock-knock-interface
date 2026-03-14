@@ -4,6 +4,13 @@ export interface AuthResponse {
   accessToken: string;
 }
 
+export interface CurrentUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  knockBalance: string | number;
+}
+
 export interface GmailConnectResponse {
   url: string;
 }
