@@ -1,12 +1,7 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { AiKeyRecord, AiProviderName, SaveKeyResponse } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { AiKeyRecord, AiProviderName, SaveAiKeyInput, SaveKeyResponse } from "@/types/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-interface SaveAiKeyInput {
-  provider: AiProviderName;
-  apiKey: string;
-}
 
 export function useAiProvidersQuery() {
   return useQuery({

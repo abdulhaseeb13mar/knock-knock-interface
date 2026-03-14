@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useCreateEmailPromptSetMutation, useDeleteEmailPromptSetMutation, useEmailPromptSetsQuery, useUpdateEmailPromptSetMutation } from "@/hooks/api";
-import type { EmailPromptSet } from "@/lib/api-types";
-import { Pencil, Trash2 } from "lucide-react";
+import type { EmailPromptSet } from "@/types/api";
+import { MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function EmailPromptSets() {
+export default function PromptsPage() {
   const { data: promptSets, isLoading } = useEmailPromptSetsQuery();
   const createMutation = useCreateEmailPromptSetMutation();
   const updateMutation = useUpdateEmailPromptSetMutation();
@@ -26,13 +26,10 @@ export default function EmailPromptSets() {
 
   const handleEdit = (set: EmailPromptSet) => {
     setEditingId(set.id);
-
     let rawFormat = set.emailFormat;
-    // Strip surrounding backticks if present so the user edits the raw text
     if (rawFormat.startsWith("`") && rawFormat.endsWith("`")) {
       rawFormat = rawFormat.slice(1, -1);
     }
-
     setEmailFormat(rawFormat);
     setAiPrompt(set.aiPrompt);
   };
@@ -44,7 +41,6 @@ export default function EmailPromptSets() {
       return;
     }
 
-    // Wrap in backticks if not already wrapped
     const payloadEmailFormat = emailFormat.startsWith("`") && emailFormat.endsWith("`") ? emailFormat : `\`${emailFormat}\``;
 
     try {
@@ -77,10 +73,18 @@ export default function EmailPromptSets() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Prompts</h1>
+        <p className="text-muted-foreground mt-1">Create and manage email prompt templates for AI generation.</p>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? "Edit Prompt Set" : "Create Prompt Set"}</CardTitle>
-          <CardDescription>Configure how AI should format and generate your emails</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="size-5" />
+            {editingId ? "Edit Prompt Set" : "Create Prompt Set"}
+          </CardTitle>
+          <CardDescription>Configure how AI should format and generate your emails.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,7 +92,7 @@ export default function EmailPromptSets() {
               <Label htmlFor="emailFormat">Sample Email / Format</Label>
               <textarea
                 id="emailFormat"
-                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-60"
+                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-60"
                 placeholder="Paste an example email format here..."
                 value={emailFormat}
                 onChange={(e) => setEmailFormat(e.target.value)}
@@ -98,7 +102,7 @@ export default function EmailPromptSets() {
               <Label htmlFor="aiPrompt">AI Prompt Instruction</Label>
               <textarea
                 id="aiPrompt"
-                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-30"
+                className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-30"
                 placeholder="Write a highly customized prompt for the AI to follow..."
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
@@ -118,8 +122,8 @@ export default function EmailPromptSets() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4">
-        <h3 className="text-lg font-medium">Saved Prompt Sets</h3>
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Saved Prompt Sets</h2>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading...</p>
         ) : promptSets?.length === 0 ? (

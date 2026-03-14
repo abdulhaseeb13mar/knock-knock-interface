@@ -1,16 +1,7 @@
-import { api } from "@/lib/api-client";
+import { api } from "@/services/api-client";
+import type { GrantTestingKnockResponse, KnockConfig } from "@/types/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-export interface KnockConfig {
-  emailsPerKnock: number;
-}
-
-export interface GrantTestingKnockResponse {
-  userId: string;
-  granted: number;
-  knockBalance: number;
-}
 
 export const ADMIN_CONFIG_KEY = "admin-config";
 

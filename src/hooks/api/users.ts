@@ -1,6 +1,6 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { CurrentUser } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { CurrentUser } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 
 export function useMeQuery() {

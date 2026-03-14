@@ -1,6 +1,6 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { ImportResponse, Recipient } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { ImportResponse, Recipient } from "@/types/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useRecipientsQuery() {

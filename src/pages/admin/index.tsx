@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useGrantTestingKnock, useKnockConfig, useUpdateKnockConfig } from "@/hooks/api/admin";
-import { Link } from "@tanstack/react-router";
 
 export default function AdminPage() {
   const { data: config, isLoading: isConfigLoading } = useKnockConfig();
@@ -38,13 +37,10 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="container max-w-4xl py-10 space-y-8">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground mr-auto inline-block">Manage system configurations and users.</p>
-        <Link to="/" className="ml-4 text-blue-500 hover:underline">
-          Back to Dashboard
-        </Link>
+        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Manage system configurations and users.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

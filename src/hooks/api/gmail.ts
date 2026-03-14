@@ -1,11 +1,7 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { GmailConnectResponse } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { GmailConnectResponse, GmailStatusResponse } from "@/types/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
-interface GmailStatusResponse {
-  integrated: boolean;
-}
 
 export function useGmailConnectMutation() {
   return useMutation({

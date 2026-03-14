@@ -12,7 +12,7 @@ export default function GmailSuccessPage() {
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">Your Gmail account has been successfully connected.</p>
           <Button asChild>
-            <Link to="/">Back to Dashboard</Link>
+            <Link to="/dashboard">Back to Dashboard</Link>
           </Button>
         </CardContent>
       </Card>

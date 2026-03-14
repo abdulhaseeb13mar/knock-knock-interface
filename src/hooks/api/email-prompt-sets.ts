@@ -1,6 +1,6 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { CreateEmailPromptSetInput, DeleteEmailPromptSetResponse, EmailPromptSet, UpdateEmailPromptSetInput } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { CreateEmailPromptSetInput, DeleteEmailPromptSetResponse, EmailPromptSet, UpdateEmailPromptSetInput } from "@/types/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useEmailPromptSetsQuery() {

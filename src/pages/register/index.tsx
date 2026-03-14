@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegisterMutation } from "@/hooks/api";
-import { ApiError } from "@/lib/api-client";
-import { setToken } from "@/lib/auth";
+import { ApiError } from "@/services/api-client";
+import { setToken } from "@/utils/auth";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -28,7 +28,7 @@ export default function RegisterPage() {
         password,
       });
       setToken(res.accessToken);
-      navigate({ to: "/" });
+      navigate({ to: "/dashboard" });
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Registration failed");
     }

@@ -1,11 +1,6 @@
-import { api } from "@/lib/api-client";
-import type { AuthResponse } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { AuthInput, AuthResponse } from "@/types/api";
 import { useMutation } from "@tanstack/react-query";
-
-interface AuthInput {
-  email: string;
-  password: string;
-}
 
 export function useLoginMutation() {
   return useMutation({

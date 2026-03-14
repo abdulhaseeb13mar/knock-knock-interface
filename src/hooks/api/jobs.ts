@@ -1,18 +1,7 @@
 import { queryKeys } from "./query-keys";
-import { api } from "@/lib/api-client";
-import type { EmailJob, StartJobResponse } from "@/lib/api-types";
+import { api } from "@/services/api-client";
+import type { EmailJob, JobActionInput, StartJobInput, StartJobResponse } from "@/types/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
-type JobAction = "pause" | "resume" | "retry";
-
-interface JobActionInput {
-  jobId: string;
-  action: JobAction;
-}
-
-interface StartJobInput {
-  resumeId: string;
-}
 
 export function useStartJobMutation() {
   return useMutation({
