@@ -6,6 +6,12 @@ export interface KnockConfig {
   emailsPerKnock: number;
 }
 
+export interface GrantTestingKnockResponse {
+  userId: string;
+  granted: number;
+  knockBalance: number;
+}
+
 export const ADMIN_CONFIG_KEY = "admin-config";
 
 export function useKnockConfig() {
@@ -31,7 +37,7 @@ export function useUpdateKnockConfig() {
 
 export function useGrantTestingKnock() {
   return useMutation({
-    mutationFn: (data: { userId: string }) => api.post<{ userId: string; granted: number; knockBalance: number }>("/jobs/admin/grant-testing-knock", data),
+    mutationFn: (data: { userId: string }) => api.post<GrantTestingKnockResponse>("/jobs/admin/grant-testing-knock", data),
     onSuccess: (data) => {
       toast.success(`Granted ${data.granted} knock to user`);
     },
