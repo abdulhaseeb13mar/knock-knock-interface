@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -170,7 +171,7 @@ export default function CampaignDetailPage() {
       {!job && (
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground">Loading campaign data…</p>
+            <div className="flex justify-center p-8"><Spinner size="lg" /></div>
           </CardContent>
         </Card>
       )}
@@ -185,7 +186,7 @@ export default function CampaignDetailPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {emailsLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+          {emailsLoading && <div className="flex justify-center p-8"><Spinner size="lg" /></div>}
 
           {!emailsLoading && campaignEmails.length === 0 && <p className="text-sm text-muted-foreground">No emails sent yet for this campaign.</p>}
 

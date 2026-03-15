@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGrantTestingKnock } from "@/hooks/api/admin";
 import { useMeQuery } from "@/hooks/api/users";
@@ -44,12 +45,12 @@ export default function GetKnocksPage() {
           <div className="flex items-center justify-between rounded-md border p-3">
             <span className="text-sm text-muted-foreground">Current knock balance</span>
             <Badge variant="outline" className="text-sm">
-              {isMeLoading ? "Loading..." : knockBalance != null ? Number(knockBalance).toLocaleString() : "Unknown"}
+              {isMeLoading ? <Spinner size="sm" /> : knockBalance != null ? Number(knockBalance).toLocaleString() : "Unknown"}
             </Badge>
           </div>
 
           <Button onClick={handleGetKnocks} disabled={!userId || grantTestingKnock.isPending}>
-            {grantTestingKnock.isPending ? "Granting..." : "Get More Knocks"}
+            {grantTestingKnock.isPending ? <><Spinner size="sm" className="mr-2" /> Granting...</> : "Get More Knocks"}
           </Button>
 
           {!userId && <p className="text-sm text-destructive">Could not determine your user ID from the current session token.</p>}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useResumeLinksQuery, useStartJobMutation } from "@/hooks/api";
@@ -72,8 +73,8 @@ export default function CampaignsPage() {
           </div>
 
           <Button onClick={handleStart} disabled={startJobMutation.isPending || !activeResumeId}>
-            <Play className="size-4 mr-2" />
-            {startJobMutation.isPending ? "Starting…" : "Start Campaign"}
+            {startJobMutation.isPending ? <Spinner size="sm" className="mr-2" /> : <Play className="size-4 mr-2" /> }
+            {startJobMutation.isPending ? "Starting..." : "Start Campaign"}
           </Button>
 
           {resumes.length === 0 && !resumesLoading && (

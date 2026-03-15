@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useCreateEmailPromptSetMutation, useDeleteEmailPromptSetMutation, useEmailPromptSetsQuery, useUpdateEmailPromptSetMutation } from "@/hooks/api";
@@ -125,7 +126,7 @@ export default function PromptsPage() {
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Saved Prompt Sets</h2>
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Loading...</p>
+          <div className="flex justify-center p-8"><Spinner size="lg" /></div>
         ) : promptSets?.length === 0 ? (
           <p className="text-sm text-muted-foreground">No prompt sets found. Create one above.</p>
         ) : (

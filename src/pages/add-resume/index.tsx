@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDeleteResumeLinkMutation, useResumeLinksQuery, useSaveResumeLinkMutation } from "@/hooks/api";
@@ -59,13 +60,13 @@ export default function AddResumePage() {
             <Input type="url" placeholder="https://drive.google.com/file/d/..." value={sharedUrl} onChange={(e) => setSharedUrl(e.target.value)} />
             <Button onClick={handleAddLink} disabled={saveResumeLinkMutation.isPending}>
               <Link2 className="size-4 mr-2" />
-              {saveResumeLinkMutation.isPending ? "Saving…" : "Save Link"}
+              {saveResumeLinkMutation.isPending ? <><Spinner size="sm" className="mr-2" /> Saving...</> : "Save Link"}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {isLoading && <p className="text-sm text-muted-foreground">Loading saved links…</p>}
+      {isLoading && <div className="flex justify-center p-8"><Spinner size="lg" /></div>}
 
       {!isLoading && resumes.length === 0 && <p className="text-sm text-muted-foreground">No resume links saved yet.</p>}
 

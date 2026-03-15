@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -52,8 +53,8 @@ export default function RecipientsPage() {
           <Input type="file" accept=".csv" className="hidden" onChange={handleImport} />
           <Button asChild variant="outline" disabled={importRecipientsMutation.isPending}>
             <span className="cursor-pointer">
-              <Upload className="size-4 mr-2" />
-              {importRecipientsMutation.isPending ? "Importing…" : "Import CSV"}
+              {importRecipientsMutation.isPending ? <Spinner size="sm" className="mr-2" /> : <Upload className="size-4 mr-2" /> }
+              {importRecipientsMutation.isPending ? "Importing..." : "Import CSV"}
             </span>
           </Button>
         </label>
@@ -68,7 +69,7 @@ export default function RecipientsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
+          {loading && <div className="flex justify-center p-8"><Spinner size="lg" /></div>}
 
           {!loading && recipients.length === 0 && <p className="text-sm text-muted-foreground">No recipients yet. Import a CSV to get started.</p>}
 

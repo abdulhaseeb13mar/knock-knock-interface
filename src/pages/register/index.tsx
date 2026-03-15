@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,7 +70,7 @@ export default function RegisterPage() {
               />
             </div>
             <Button type="submit" className="w-full shadow-lg shadow-primary/25" disabled={registerMutation.isPending}>
-              {registerMutation.isPending ? "Creating account…" : "Create Account"}
+              {registerMutation.isPending ? <><Spinner size="sm" className="mr-2" /> Creating account...</> : "Create Account"}
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted-foreground">

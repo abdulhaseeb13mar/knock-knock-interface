@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGmailConnectMutation, useGmailRevokeMutation, useGmailStatusQuery } from "@/hooks/api";
 import { ApiError } from "@/services/api-client";
@@ -70,7 +71,7 @@ export default function EmailProviderPage() {
             </div>
           ) : (
             <Button onClick={handleConnect} disabled={loading || statusLoading}>
-              <Mail className="size-4 mr-2" />
+              {loading ? <Spinner size="sm" className="mr-2" /> : <Mail className="size-4 mr-2" /> }
               {loading ? "Connecting…" : "Connect Gmail"}
             </Button>
           )}

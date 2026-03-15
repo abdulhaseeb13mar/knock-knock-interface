@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,7 +65,7 @@ export default function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full shadow-lg shadow-primary/25" disabled={loginMutation.isPending}>
-              {loginMutation.isPending ? "Signing in…" : "Sign In"}
+              {loginMutation.isPending ? <><Spinner size="sm" className="mr-2" /> Signing in...</> : "Sign In"}
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted-foreground">

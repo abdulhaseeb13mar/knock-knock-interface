@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -153,7 +154,7 @@ export default function AiKeysPage() {
         </CardHeader>
         <CardContent>
           {keysLoading ? (
-            <p className="text-sm text-muted-foreground">Loading saved keys…</p>
+            <div className="flex justify-center p-8"><Spinner size="lg" /></div>
           ) : orderedKeys.length === 0 ? (
             <p className="text-sm text-muted-foreground">No keys yet. Save one to use AI features.</p>
           ) : (
@@ -209,7 +210,7 @@ export default function AiKeysPage() {
                     Cancel
                   </Button>
                   <Button size="sm" onClick={handleSavePriority} disabled={updateAiKeyPriorityMutation.isPending}>
-                    {updateAiKeyPriorityMutation.isPending ? "Saving..." : "Save Priority"}
+                    {updateAiKeyPriorityMutation.isPending ? <><Spinner size="sm" className="mr-2" /> Saving...</> : "Save Priority"}
                   </Button>
                 </div>
               )}

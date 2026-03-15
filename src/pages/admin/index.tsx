@@ -51,7 +51,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             {isConfigLoading ? (
-              <p>Loading...</p>
+              <div className="flex justify-center p-4"><Spinner size="lg" /></div>
             ) : (
               <form onSubmit={handleUpdateConfig} className="space-y-4">
                 <div className="space-y-2">
@@ -60,7 +60,7 @@ export default function AdminPage() {
                   <p className="text-sm text-muted-foreground">Number of emails generated/sent per 1 knock deducted.</p>
                 </div>
                 <Button type="submit" disabled={updateConfig.isPending}>
-                  {updateConfig.isPending ? "Updating..." : "Update Config"}
+                  {updateConfig.isPending ? <><Spinner size="sm" className="mr-2" /> Updating...</> : "Update Config"}
                 </Button>
               </form>
             )}
@@ -79,7 +79,7 @@ export default function AdminPage() {
                 <Input id="user-id" placeholder="Enter User ID (UUID)" value={userId} onChange={(e) => setUserId(e.target.value)} required />
               </div>
               <Button type="submit" variant="secondary" disabled={grantKnock.isPending || !userId.trim()}>
-                {grantKnock.isPending ? "Granting..." : "Grant 100 Knock"}
+                {grantKnock.isPending ? <><Spinner size="sm" className="mr-2" /> Granting...</> : "Grant 100 Knock"}
               </Button>
             </form>
           </CardContent>
