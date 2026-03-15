@@ -16,21 +16,28 @@ function StepCard({ step }: { step: OnboardingStep }) {
   const completed = step.useCompleted();
 
   return (
-    <Card className={completed ? "border-green-200 bg-green-50/50" : undefined}>
+    <Card className={completed ? "border-emerald-500/30 bg-emerald-500/5 shadow-sm shadow-emerald-500/5" : "bg-card shadow-sm border-border/50"}>
       <CardContent className="flex items-start gap-4 p-6">
         <div
-          className={`size-10 rounded-lg flex items-center justify-center shrink-0 ${completed ? "bg-green-100 text-green-700" : "bg-primary/10 text-primary"}`}
+          className={`size-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${completed ? "bg-emerald-500/20 text-emerald-400 shadow-inner shadow-emerald-500/20" : "bg-primary/10 text-primary shadow-inner shadow-primary/20"}`}
         >
           {completed ? <Check className="size-5" /> : step.icon}
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold">{step.title}</h3>
-            {completed && <span className="text-xs text-green-700 font-medium">Completed</span>}
+            <h3 className="font-semibold text-foreground tracking-tight">{step.title}</h3>
+            {completed && (
+              <span className="text-xs text-emerald-400 font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">Completed</span>
+            )}
           </div>
-          <p className="text-sm text-muted-foreground">{step.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
         </div>
-        <Button variant={completed ? "outline" : "default"} size="sm" asChild>
+        <Button
+          variant={completed ? "outline" : "default"}
+          size="sm"
+          asChild
+          className={completed ? "border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-400" : ""}
+        >
           <Link to={step.href}>{completed ? "Manage" : "Set Up"}</Link>
         </Button>
       </CardContent>
@@ -92,19 +99,21 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1">Complete the steps below to launch your first outreach campaign.</p>
       </div>
 
-      <Card>
+      <Card className="border-border/50 shadow-md">
         <CardHeader>
           <CardTitle>Quick Setup</CardTitle>
           <CardDescription>Follow these steps in order to get up and running.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {steps.map((step, i) => (
-            <div key={step.href} className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className="size-8 rounded-full border-2 flex items-center justify-center text-xs font-bold">{i + 1}</div>
-                {i < steps.length - 1 && <div className="w-px h-8 bg-border" />}
+            <div key={step.href} className="flex items-start gap-4 group">
+              <div className="flex flex-col items-center mt-1">
+                <div className="size-8 rounded-full border-2 border-primary/20 bg-background/50 flex items-center justify-center text-xs font-bold text-primary shadow-sm group-hover:border-primary/50 group-hover:bg-primary/5 transition-colors">
+                  {i + 1}
+                </div>
+                {i < steps.length - 1 && <div className="w-px h-full min-h-[3rem] bg-border/50 my-2" />}
               </div>
-              <div className="flex-1 pb-4">
+              <div className="flex-1 pb-6 w-full">
                 <StepCard step={step} />
               </div>
             </div>
