@@ -1,90 +1,93 @@
-import { useMemo, useState } from "react";
-
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useResumeLinksQuery, useStartJobMutation } from "@/hooks/api";
-import { ApiError } from "@/services/api-client";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useJobsQuery } from "@/hooks/api/jobs";
+import { formatDate } from "@/utils/format-date";
 import { useNavigate } from "@tanstack/react-router";
-import { Play, Send } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Send } from "lucide-react";
 
 export default function CampaignsPage() {
-  const [resumeId, setResumeId] = useState<string>("");
-  const navigate = useNavigate();
-  const startJobMutation = useStartJobMutation();
-  const { data: resumes = [], isLoading: resumesLoading } = useResumeLinksQuery();
+  const navigate = useNavigate({ from: "/campaigns" });
+  const { data: jobs = [], isLoading } = useJobsQuery();
 
-  const activeResumeId = useMemo(() => {
-    if (resumeId && resumes.some((r) => r.id === resumeId)) return resumeId;
-    return resumes[0]?.id ?? "";
-  }, [resumeId, resumes]);
-
-  async function handleStart() {
-    if (!activeResumeId) {
-      toast.error("Select a resume link before starting");
-      return;
-    }
-
-    try {
-      const res = await startJobMutation.mutateAsync({ resumeId: activeResumeId });
-      if ("message" in res) {
-        toast.info(res.message);
-      } else {
-        toast.success("Campaign started!");
-        navigate({ to: "/campaigns/$campaignId", params: { campaignId: res.id } });
-      }
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Failed to start campaign");
-    }
+  function statusColor(s: string) {
+    if (s === "RUNNING") return "default" as const;
+    if (s === "PAUSED") return "secondary" as const;
+    return "outline" as const;
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Campaigns</h1>
-        <p className="text-muted-foreground mt-1">Launch and manage your outreach campaigns.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Campaigns</h1>
+          <p className="text-muted-foreground mt-1">Manage and track your outreach campaigns.</p>
+        </div>
+        <Button disabled>
+          <Plus className="size-4 mr-2" />
+          Create new campaign
+        </Button>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Send className="size-5" />
-            Start New Campaign
+            Your Campaigns
           </CardTitle>
-          <CardDescription>Select a resume and start a new outreach campaign. Emails will be sent to all pending recipients.</CardDescription>
+          <CardDescription>View all your recent and past outreach campaigns.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4 max-w-sm">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Select resume to use</p>
-            <Select value={activeResumeId} onValueChange={setResumeId}>
-              <SelectTrigger>
-                <SelectValue placeholder={resumesLoading ? "Loading resumes…" : "Select resume link"} />
-              </SelectTrigger>
-              <SelectContent>
-                {resumes.map((resume) => (
-                  <SelectItem key={resume.id} value={resume.id}>
-                    {resume.sharedUrl}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center p-8">
+              <Spinner size="lg" />
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground">
+              <p>No campaigns found.</p>
+            </div>
+          ) : (
+            <div className="border rounded-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead>Campaign ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Progress</TableHead>
+                    <TableHead>Started</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {jobs.map((job) => {
+                    const progress = job.total > 0 ? Math.round(((job.sentCount + job.failedCount) / job.total) * 100) : 0;
 
-          <Button onClick={handleStart} disabled={startJobMutation.isPending || !activeResumeId}>
-            {startJobMutation.isPending ? <Spinner size="sm" className="mr-2" /> : <Play className="size-4 mr-2" /> }
-            {startJobMutation.isPending ? "Starting..." : "Start Campaign"}
-          </Button>
-
-          {resumes.length === 0 && !resumesLoading && (
-            <p className="text-sm text-muted-foreground">
-              No resume links found. Add one in the{" "}
-              <a href="/add-resume" className="underline text-primary">
-                Add Resume
-              </a>{" "}
-              page first.
-            </p>
+                    return (
+                      <TableRow
+                        key={job.id}
+                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => navigate({ to: "/campaigns/$campaignId", params: { campaignId: job.id } })}
+                      >
+                        <TableCell className="font-mono text-xs">{job.id}</TableCell>
+                        <TableCell>
+                          <Badge variant={statusColor(job.status)}>{job.status}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">
+                              {job.sentCount} / {job.total}
+                            </span>
+                            <span className="text-xs text-muted-foreground">({progress}%)</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{formatDate(job.startedAt)}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
