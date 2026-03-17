@@ -1,3 +1,7 @@
+import type { Recipient } from "./recipient.types";
+import type { SentEmail } from "./email.types";
+import type { EmailPromptSet } from "./prompt.types";
+
 export type JobStatus = "RUNNING" | "PAUSED" | "COMPLETED";
 
 export interface EmailJob {
@@ -31,4 +35,10 @@ export interface JobSSEEvent {
   sentCount?: number;
   failedCount?: number;
   reason?: string;
+}
+
+export interface JobDetailsResponse extends EmailJob {
+  recipients: Recipient[];
+  sentEmails: SentEmail[];
+  emailPromptSet: EmailPromptSet | null;
 }
