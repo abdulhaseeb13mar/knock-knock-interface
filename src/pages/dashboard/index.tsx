@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAiKeysQuery, useGmailStatusQuery, useResumeLinksQuery } from "@/hooks/api";
+import { useAiKeysQuery, useEmailPromptSetsQuery, useGmailStatusQuery, useResumeLinksQuery } from "@/hooks/api";
 import { Link } from "@tanstack/react-router";
-import { Check, FileText, Key, Mail, Send } from "lucide-react";
+import { Check, FileText, Key, Mail, MessageSquare, Send } from "lucide-react";
 
 interface OnboardingStep {
   title: string;
@@ -60,13 +60,32 @@ function useResumeCompleted() {
   return data && data.length > 0 ? true : undefined;
 }
 
+function usePromptsCompleted() {
+  const { data } = useEmailPromptSetsQuery();
+  return data && data.length > 0 ? true : undefined;
+}
+
 const steps: OnboardingStep[] = [
   {
-    title: "Connect Email Provider",
+    title: "Connect Gmail",
     description: "Link your Gmail account to send emails through secure OAuth integration.",
     href: "/email-provider",
     icon: <Mail className="size-5" />,
     useCompleted: useGmailCompleted,
+  },
+  {
+    title: "Add Resume Link",
+    description: "Add a Google Drive link to your resume so it can be shared with recipients.",
+    href: "/add-resume",
+    icon: <FileText className="size-5" />,
+    useCompleted: useResumeCompleted,
+  },
+  {
+    title: "Add AI Prompt",
+    description: "Create email prompt templates to customize how AI generates personalized emails.",
+    href: "/prompts",
+    icon: <MessageSquare className="size-5" />,
+    useCompleted: usePromptsCompleted,
   },
   {
     title: "Add AI Keys",
@@ -74,13 +93,6 @@ const steps: OnboardingStep[] = [
     href: "/ai-keys",
     icon: <Key className="size-5" />,
     useCompleted: useAiKeysCompleted,
-  },
-  {
-    title: "Upload Resume",
-    description: "Add a Google Drive link to your resume so it can be shared with recipients.",
-    href: "/add-resume",
-    icon: <FileText className="size-5" />,
-    useCompleted: useResumeCompleted,
   },
   {
     title: "Launch a Campaign",
