@@ -15,11 +15,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Get Started", href: "/dashboard", icon: <Rocket className="size-4" /> },
+  { label: "Campaigns", href: "/campaigns", icon: <Send className="size-4" /> },
   { label: "Email Provider", href: "/email-provider", icon: <Mail className="size-4" /> },
   { label: "AI Keys", href: "/ai-keys", icon: <Key className="size-4" /> },
   { label: "Get Knocks", href: "/get-knocks", icon: <Coins className="size-4" /> },
   { label: "Add Resume", href: "/add-resume", icon: <FileText className="size-4" /> },
-  { label: "Campaigns", href: "/campaigns", icon: <Send className="size-4" /> },
   { label: "Prompts", href: "/prompts", icon: <MessageSquare className="size-4" /> },
   { label: "Recipients", href: "/recipients", icon: <Users className="size-4" /> },
   { label: "Admin", href: "/admin", icon: <Shield className="size-4" />, adminOnly: true },
