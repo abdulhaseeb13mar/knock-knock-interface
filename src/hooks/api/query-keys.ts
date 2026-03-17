@@ -10,6 +10,8 @@ export const queryKeys = {
     sent: ["emails", "sent"] as const,
   },
   jobs: {
+    list: ["jobs", "list"] as const,
+    details: (jobId: string) => ["jobs", jobId, "details"] as const,
     status: (jobId: string) => ["jobs", jobId, "status"] as const,
   },
   gmail: {
