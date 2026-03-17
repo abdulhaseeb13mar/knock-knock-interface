@@ -7,7 +7,7 @@ export function DashboardLayout() {
       <Sidebar />
       <div className="lg:pl-64 flex flex-col min-h-screen">
         {/* Mobile top bar spacer */}
-        <div className="h-14 lg:h-0 flex-shrink-0" />
+        <div className="h-14 lg:h-0 shrink-0" />
         <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full flex-1">
           <Outlet />
         </main>
