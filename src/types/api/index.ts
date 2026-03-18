@@ -3,7 +3,7 @@ export * from "./ai.types";
 export * from "./auth.types";
 export * from "./email.types";
 export * from "./gmail.types";
-export * from "./job.types";
+export * from "./campaign.types";
 export * from "./prompt.types";
 export * from "./recipient.types";
 export * from "./resume.types";

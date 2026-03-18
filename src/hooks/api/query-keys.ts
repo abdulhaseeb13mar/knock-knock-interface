@@ -9,10 +9,10 @@ export const queryKeys = {
   emails: {
     sent: ["emails", "sent"] as const,
   },
-  jobs: {
-    list: ["jobs", "list"] as const,
-    details: (jobId: string) => ["jobs", jobId, "details"] as const,
-    status: (jobId: string) => ["jobs", jobId, "status"] as const,
+  campaigns: {
+    list: ["campaigns", "list"] as const,
+    details: (campaignId: string) => ["campaigns", campaignId, "details"] as const,
+    status: (campaignId: string) => ["campaigns", campaignId, "status"] as const,
   },
   gmail: {
     status: ["gmail", "status"] as const,

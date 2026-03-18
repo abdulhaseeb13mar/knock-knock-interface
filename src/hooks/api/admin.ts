@@ -8,14 +8,14 @@ export const ADMIN_CONFIG_KEY = "admin-config";
 export function useKnockConfig() {
   return useQuery({
     queryKey: [ADMIN_CONFIG_KEY],
-    queryFn: () => api.get<KnockConfig>("/jobs/admin/knock-config"),
+    queryFn: () => api.get<KnockConfig>("/campaigns/admin/knock-config"),
   });
 }
 
 export function useUpdateKnockConfig() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: KnockConfig) => api.patch<KnockConfig>("/jobs/admin/knock-config", data),
+    mutationFn: (data: KnockConfig) => api.patch<KnockConfig>("/campaigns/admin/knock-config", data),
     onSuccess: (data) => {
       queryClient.setQueryData([ADMIN_CONFIG_KEY], data);
       toast.success("Config updated successfully");
@@ -28,7 +28,7 @@ export function useUpdateKnockConfig() {
 
 export function useGrantTestingKnock() {
   return useMutation({
-    mutationFn: (data: { userId: string }) => api.post<GrantTestingKnockResponse>("/jobs/admin/grant-testing-knock", data),
+    mutationFn: (data: { userId: string }) => api.post<GrantTestingKnockResponse>("/campaigns/admin/grant-testing-knock", data),
     onSuccess: (data) => {
       toast.success(`Granted ${data.granted} knock to user`);
     },

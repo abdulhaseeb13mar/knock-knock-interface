@@ -1,6 +1,6 @@
 export interface SentEmail {
   id: string;
-  jobId: string;
+  campaignId: string;
   recipientEmail: string;
   subject: string;
   body: string;

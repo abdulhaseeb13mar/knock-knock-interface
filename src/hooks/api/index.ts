@@ -3,7 +3,7 @@ export * from "./auth";
 export * from "./emails";
 export * from "./email-prompt-sets";
 export * from "./gmail";
-export * from "./jobs";
+export * from "./campaigns";
 export * from "./query-keys";
 export * from "./recipients";
 export * from "./resume";

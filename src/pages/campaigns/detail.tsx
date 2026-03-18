@@ -7,9 +7,9 @@ import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { queryKeys, useJobActionMutation, useJobDetailsQuery } from "@/hooks/api";
+import { queryKeys, useCampaignActionMutation, useCampaignDetailsQuery } from "@/hooks/api";
 import { sseUrl } from "@/services/api-client";
-import type { JobDetailsResponse, JobSSEEvent } from "@/types/api";
+import type { CampaignDetailsResponse, CampaignSSEEvent } from "@/types/api";
 import { getToken } from "@/utils/auth";
 import { formatDate } from "@/utils/format-date";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -22,23 +22,23 @@ export default function CampaignDetailPage() {
   const { campaignId } = useParams({ strict: false }) as { campaignId: string };
   const ctrlRef = useRef<AbortController | null>(null);
   const queryClient = useQueryClient();
-  const jobActionMutation = useJobActionMutation();
-  const { data: job, refetch: refetchJobStatus, isLoading } = useJobDetailsQuery(campaignId, Boolean(campaignId));
+  const campaignActionMutation = useCampaignActionMutation();
+  const { data: campaign, refetch: refetchCampaignStatus, isLoading } = useCampaignDetailsQuery(campaignId, Boolean(campaignId));
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const connectSSE = useCallback(
-    (jobId: string) => {
+    (activeCampaignId: string) => {
       ctrlRef.current?.abort();
       const ctrl = new AbortController();
       ctrlRef.current = ctrl;
 
-      fetchEventSource(sseUrl(`/jobs/${jobId}/stream`), {
+      fetchEventSource(sseUrl(`/campaigns/${activeCampaignId}/stream`), {
         headers: { Authorization: `Bearer ${getToken() ?? ""}` },
         signal: ctrl.signal,
         onmessage(ev) {
           try {
-            const data: JobSSEEvent = JSON.parse(ev.data);
-            queryClient.setQueryData(queryKeys.jobs.details(jobId), (prev: JobDetailsResponse | null | undefined) => {
+            const data: CampaignSSEEvent = JSON.parse(ev.data);
+            queryClient.setQueryData(queryKeys.campaigns.details(activeCampaignId), (prev: CampaignDetailsResponse | null | undefined) => {
               if (!prev) return prev ?? null;
               return {
                 ...prev,
@@ -68,18 +68,18 @@ export default function CampaignDetailPage() {
   );
 
   useEffect(() => {
-    if (job?.status === "RUNNING") {
+    if (campaign?.status === "RUNNING") {
       connectSSE(campaignId);
     }
     return () => {
       ctrlRef.current?.abort();
     };
-  }, [job?.status, campaignId, connectSSE]);
+  }, [campaign?.status, campaignId, connectSSE]);
 
   async function handleAction(action: "pause" | "resume" | "retry") {
     try {
-      const res = await jobActionMutation.mutateAsync({ jobId: campaignId, action });
-      queryClient.setQueryData(queryKeys.jobs.details(campaignId), (prev: JobDetailsResponse | undefined | null) => {
+      const res = await campaignActionMutation.mutateAsync({ campaignId, action });
+      queryClient.setQueryData(queryKeys.campaigns.details(campaignId), (prev: CampaignDetailsResponse | undefined | null) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -96,7 +96,7 @@ export default function CampaignDetailPage() {
     }
   }
 
-  const progress = job && job.total > 0 ? Math.round(((job.sentCount + job.failedCount) / job.total) * 100) : 0;
+  const progress = campaign && campaign.total > 0 ? Math.round(((campaign.sentCount + campaign.failedCount) / campaign.total) * 100) : 0;
 
   function statusColor(s: string) {
     if (s === "RUNNING") return "default" as const;
@@ -128,7 +128,7 @@ export default function CampaignDetailPage() {
         </Card>
       )}
 
-      {job && (
+      {campaign && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-2">
@@ -139,10 +139,10 @@ export default function CampaignDetailPage() {
                     <CardDescription>Real-time campaign execution progress</CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={statusColor(job.status)} className="text-sm px-3 py-1">
-                      {job.status}
+                    <Badge variant={statusColor(campaign.status)} className="text-sm px-3 py-1">
+                      {campaign.status}
                     </Badge>
-                    <Button variant="ghost" size="icon" onClick={() => refetchJobStatus()} title="Refresh status">
+                    <Button variant="ghost" size="icon" onClick={() => refetchCampaignStatus()} title="Refresh status">
                       <RefreshCw className="size-4" />
                     </Button>
                   </div>
@@ -152,42 +152,42 @@ export default function CampaignDetailPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between font-medium">
                     <span>
-                      {job.sentCount + job.failedCount} / {job.total} Processed
+                      {campaign.sentCount + campaign.failedCount} / {campaign.total} Processed
                     </span>
                     <span>{progress}%</span>
                   </div>
                   <Progress value={progress} className="h-3" />
                   <div className="flex gap-4 text-sm text-muted-foreground pt-1">
                     <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                      <MailCheck className="size-4" /> Sent: {job.sentCount}
+                      <MailCheck className="size-4" /> Sent: {campaign.sentCount}
                     </span>
                     <span className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                      <AlertCircle className="size-4" /> Failed: {job.failedCount}
+                      <AlertCircle className="size-4" /> Failed: {campaign.failedCount}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Users className="size-4" /> Total: {job.total}
+                      <Users className="size-4" /> Total: {campaign.total}
                     </span>
                   </div>
                 </div>
 
-                {job.pauseReason && (
+                {campaign.pauseReason && (
                   <div className="p-3 bg-yellow-50 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400 rounded-md text-sm border border-yellow-200 dark:border-yellow-900">
-                    <strong>Paused Reason:</strong> {job.pauseReason}
+                    <strong>Paused Reason:</strong> {campaign.pauseReason}
                   </div>
                 )}
 
                 <div className="flex gap-3 pt-2">
-                  {job.status === "RUNNING" && (
+                  {campaign.status === "RUNNING" && (
                     <Button size="sm" onClick={() => handleAction("pause")}>
                       <Pause className="size-4 mr-2" /> Pause Campaign
                     </Button>
                   )}
-                  {job.status === "PAUSED" && (
+                  {campaign.status === "PAUSED" && (
                     <Button size="sm" onClick={() => handleAction("resume")}>
                       <Play className="size-4 mr-2" /> Resume Campaign
                     </Button>
                   )}
-                  {(job.status === "PAUSED" || job.status === "COMPLETED") && job.failedCount > 0 && (
+                  {(campaign.status === "PAUSED" || campaign.status === "COMPLETED") && campaign.failedCount > 0 && (
                     <Button variant="outline" size="sm" onClick={() => handleAction("retry")}>
                       <RotateCcw className="size-4 mr-2" /> Retry Failed
                     </Button>
@@ -205,21 +205,21 @@ export default function CampaignDetailPage() {
                   <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 mb-1">
                     <Clock className="size-4" /> Started At
                   </div>
-                  <div className="text-sm">{formatDate(job.startedAt)}</div>
+                  <div className="text-sm">{formatDate(campaign.startedAt)}</div>
                 </div>
-                {job.completedAt && (
+                {campaign.completedAt && (
                   <div>
                     <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 mb-1">
                       <Clock className="size-4" /> Completed At
                     </div>
-                    <div className="text-sm">{formatDate(job.completedAt)}</div>
+                    <div className="text-sm">{formatDate(campaign.completedAt)}</div>
                   </div>
                 )}
                 <div>
                   <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 mb-1">Prompt Set</div>
                   <div className="text-sm">
-                    {job.emailPromptSet ? (
-                      <span className="font-medium">{job.emailPromptSet.emailFormat}</span>
+                    {campaign.emailPromptSet ? (
+                      <span className="font-medium">{campaign.emailPromptSet.emailFormat}</span>
                     ) : (
                       <span className="text-muted-foreground italic">None attached</span>
                     )}
@@ -241,11 +241,11 @@ export default function CampaignDetailPage() {
                   <CardTitle className="flex items-center gap-2">
                     <Users className="size-5" />
                     All Recipients
-                    <Badge variant="outline">{job.recipients?.length}</Badge>
+                    <Badge variant="outline">{campaign.recipients?.length}</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {!job.recipients || job.recipients.length === 0 ? (
+                  {!campaign.recipients || campaign.recipients.length === 0 ? (
                     <p className="text-sm flex justify-center py-10 text-muted-foreground">No recipients found.</p>
                   ) : (
                     <div className="rounded-md border overflow-hidden">
@@ -259,7 +259,7 @@ export default function CampaignDetailPage() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {job.recipients.map((r) => (
+                          {campaign.recipients.map((r) => (
                             <TableRow key={r.id}>
                               <TableCell className="font-medium">{r.companyEmail?.email}</TableCell>
                               <TableCell>{r.companyEmail?.companyName || "N/A"}</TableCell>
@@ -289,11 +289,11 @@ export default function CampaignDetailPage() {
                   <CardTitle className="flex items-center gap-2">
                     <MailCheck className="size-5" />
                     Sent Emails
-                    <Badge variant="outline">{job.sentEmails?.length}</Badge>
+                    <Badge variant="outline">{campaign.sentEmails?.length}</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {!job.sentEmails || job.sentEmails.length === 0 ? (
+                  {!campaign.sentEmails || campaign.sentEmails.length === 0 ? (
                     <p className="text-sm flex justify-center py-10 text-muted-foreground">No emails have been successfully sent yet.</p>
                   ) : (
                     <div className="rounded-md border overflow-hidden">
@@ -306,7 +306,7 @@ export default function CampaignDetailPage() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {job.sentEmails.map((e) => (
+                          {campaign.sentEmails.map((e) => (
                             <Fragment key={e.id}>
                               <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => setExpandedId(expandedId === e.id ? null : e.id)}>
                                 <TableCell className="font-medium">{e.recipientEmail}</TableCell>

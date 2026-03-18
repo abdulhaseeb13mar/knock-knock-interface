@@ -15,7 +15,7 @@ export interface Recipient {
   status: RecipientStatus;
   error?: string | null;
   sentAt?: string | null;
-  jobId?: string | null;
+  campaignId?: string | null;
   createdAt: string;
   companyEmail: CompanyEmail;
 }
