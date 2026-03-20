@@ -4,6 +4,7 @@ import AdminPage from "@/pages/admin";
 import AiKeysPage from "@/pages/ai-keys";
 import CampaignsPage from "@/pages/campaigns";
 import CampaignDetailPage from "@/pages/campaigns/detail";
+import CreateCampaignPage from "@/pages/create-campaign";
 import DashboardPage from "@/pages/dashboard";
 import EmailProviderPage from "@/pages/email-provider";
 import GetKnocksPage from "@/pages/get-knocks";
@@ -115,6 +116,12 @@ const campaignDetailRoute = createRoute({
   component: CampaignDetailPage,
 });
 
+const createCampaignRoute = createRoute({
+  getParentRoute: () => dashboardLayoutRoute,
+  path: "/create-campaign",
+  component: CreateCampaignPage,
+});
+
 const promptsRoute = createRoute({
   getParentRoute: () => dashboardLayoutRoute,
   path: "/prompts",
@@ -148,6 +155,7 @@ const routeTree = rootRoute.addChildren([
     addResumeRoute,
     campaignsRoute,
     campaignDetailRoute,
+    createCampaignRoute,
     promptsRoute,
     recipientsRoute,
     adminRoute,

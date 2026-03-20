@@ -30,6 +30,14 @@ export interface StartCampaignInput {
   promptSetId: string;
 }
 
+export interface CreateCampaignInput {
+  resumeId: string;
+  recipientIds: string[];
+  aiProvider: string;
+  promptSetId: string;
+  dailyLimit: number;
+}
+
 export interface CampaignSSEEvent {
   status?: CampaignStatus;
   total?: number;

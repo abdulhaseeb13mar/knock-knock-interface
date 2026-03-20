@@ -25,7 +25,7 @@ export default function CampaignsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Campaigns</h1>
           <p className="text-muted-foreground mt-1">Manage and track your outreach campaigns.</p>
         </div>
-        <Button disabled>
+        <Button onClick={() => navigate({ to: "/create-campaign" })}>
           <Plus className="size-4 mr-2" />
           Create new campaign
         </Button>

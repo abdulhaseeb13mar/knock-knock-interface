@@ -1,11 +1,21 @@
 import { queryKeys } from "./query-keys";
 import { api } from "@/services/api-client";
-import type { CampaignActionInput, CampaignDetailsResponse, EmailCampaign, StartCampaignInput, StartCampaignResponse } from "@/types/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import type { CampaignActionInput, CampaignDetailsResponse, CreateCampaignInput, EmailCampaign, StartCampaignInput, StartCampaignResponse } from "@/types/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useStartCampaignMutation() {
   return useMutation({
     mutationFn: (input: StartCampaignInput) => api.post<StartCampaignResponse>("/campaigns/start", input),
+  });
+}
+
+export function useCreateCampaignMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreateCampaignInput) => api.post<EmailCampaign>("/campaigns", input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.campaigns.list });
+    },
   });
 }
 
