@@ -34,7 +34,7 @@ export interface CreateCampaignInput {
   resumeId: string;
   recipientIds: string[];
   aiProvider: string;
-  promptSetId: string;
+  emailpromptSetId: string;
   dailyLimit: number;
 }
 

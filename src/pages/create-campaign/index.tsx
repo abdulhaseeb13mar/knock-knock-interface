@@ -71,7 +71,7 @@ export default function CreateCampaignPage() {
         resumeId: selectedResumeId,
         recipientIds: selectedRecipientIds,
         aiProvider: selectedAiProvider,
-        promptSetId: selectedPromptSetId,
+        emailpromptSetId: selectedPromptSetId,
         dailyLimit,
       });
       toast.success("Campaign created successfully");
