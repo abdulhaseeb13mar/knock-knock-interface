@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +13,37 @@ interface SettingsStepProps {
   promptSetSubject: string | null;
 }
 
-export function SettingsStep({ dailyLimit, onChangeDailyLimit, subject, onChangeSubject, promptSetSubject }: SettingsStepProps) {
+export function SettingsStep({ dailyLimit, onChangeDailyLimit }: SettingsStepProps) {
+  const [displayValue, setDisplayValue] = useState(String(dailyLimit));
+
+  useEffect(() => {
+    setDisplayValue(String(dailyLimit));
+  }, [dailyLimit]);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+
+    if (!/^\d*$/.test(raw)) return;
+
+    setDisplayValue(raw);
+
+    if (raw !== "") {
+      const parsed = parseInt(raw, 10);
+      onChangeDailyLimit(Math.min(500, Math.max(1, parsed)));
+    }
+  }
+
+  function handleBlur() {
+    if (displayValue === "" || isNaN(parseInt(displayValue, 10))) {
+      setDisplayValue("1");
+      onChangeDailyLimit(1);
+      return;
+    }
+    const clamped = Math.min(500, Math.max(1, parseInt(displayValue, 10)));
+    setDisplayValue(String(clamped));
+    onChangeDailyLimit(clamped);
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -25,12 +57,7 @@ export function SettingsStep({ dailyLimit, onChangeDailyLimit, subject, onChange
         <div className="max-w-md space-y-5">
           <div className="space-y-2">
             <Label htmlFor="subject">Email Subject</Label>
-            <Input
-              id="subject"
-              placeholder="Hello from Knock Knock"
-              value={subject}
-              onChange={(e) => onChangeSubject(e.target.value)}
-            />
+            <Input id="subject" placeholder="Hello from Knock Knock" value={subject} onChange={(e) => onChangeSubject(e.target.value)} />
             <p className="text-xs text-muted-foreground">
               {promptSetSubject
                 ? "Pre-filled from the selected prompt set. Editing it here applies to this campaign only."
@@ -41,15 +68,8 @@ export function SettingsStep({ dailyLimit, onChangeDailyLimit, subject, onChange
 
           <div className="space-y-2">
             <Label htmlFor="dailyLimit">Daily Email Limit</Label>
-            <Input
-              id="dailyLimit"
-              type="number"
-              min={1}
-              max={500}
-              value={dailyLimit}
-              onChange={(e) => onChangeDailyLimit(Math.max(1, parseInt(e.target.value) || 1))}
-            />
-            <p className="text-xs text-muted-foreground">Maximum number of emails to send per day during this campaign.</p>
+            <Input id="dailyLimit" type="text" inputMode="numeric" value={displayValue} onChange={handleChange} onBlur={handleBlur} />
+            <p className="text-xs text-muted-foreground">Maximum number of emails to send per day during this campaign (1-500).</p>
           </div>
         </div>
       </CardContent>
