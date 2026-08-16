@@ -32,6 +32,7 @@ export default function CreateCampaignPage() {
   const [selectedRecipientIds, setSelectedRecipientIds] = useState<string[]>([]);
   const [selectedAiProvider, setSelectedAiProvider] = useState<AiProviderName | null>(null);
   const [selectedPromptSetId, setSelectedPromptSetId] = useState<string | null>(null);
+  const [subjectOverride, setSubjectOverride] = useState<string | null>(null);
   const [dailyLimit, setDailyLimit] = useState(50);
 
   const { data: resumes = [] } = useResumeLinksQuery();
@@ -40,6 +41,9 @@ export default function CreateCampaignPage() {
 
   const selectedResume = resumes.find((r) => r.id === selectedResumeId);
   const selectedPrompt = promptSets.find((p) => p.id === selectedPromptSetId);
+
+  // Follows the selected prompt set's subject until the user types their own
+  const subject = subjectOverride ?? selectedPrompt?.subject ?? "";
 
   function canProceed(): boolean {
     switch (step) {
@@ -71,7 +75,8 @@ export default function CreateCampaignPage() {
         resumeId: selectedResumeId,
         recipientIds: selectedRecipientIds,
         aiProvider: selectedAiProvider,
-        emailpromptSetId: selectedPromptSetId,
+        emailPromptSetId: selectedPromptSetId,
+        ...(subject.trim() ? { subject: subject.trim() } : {}),
         dailyLimit,
       });
       toast.success("Campaign created successfully");
@@ -86,12 +91,19 @@ export default function CreateCampaignPage() {
     <RecipientsStep selectedRecipientIds={selectedRecipientIds} onToggle={toggleRecipient} onSetAll={setSelectedRecipientIds} />,
     <AiProviderStep selectedAiProvider={selectedAiProvider} onSelect={setSelectedAiProvider} />,
     <PromptStep selectedPromptSetId={selectedPromptSetId} onSelect={setSelectedPromptSetId} />,
-    <SettingsStep dailyLimit={dailyLimit} onChangeDailyLimit={setDailyLimit} />,
+    <SettingsStep
+      dailyLimit={dailyLimit}
+      onChangeDailyLimit={setDailyLimit}
+      subject={subject}
+      onChangeSubject={setSubjectOverride}
+      promptSetSubject={selectedPrompt?.subject ?? null}
+    />,
     <ReviewStep
       resume={selectedResume}
       selectedRecipientIds={selectedRecipientIds}
       selectedAiProvider={selectedAiProvider}
       promptSet={selectedPrompt}
+      subject={subject}
       dailyLimit={dailyLimit}
     />,
   ];

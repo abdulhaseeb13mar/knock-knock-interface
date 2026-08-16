@@ -1,6 +1,6 @@
 import type { SentEmail } from "./email.types";
 import type { EmailPromptSet } from "./prompt.types";
-import type { Recipient } from "./recipient.types";
+import type { CampaignRecipient } from "./recipient.types";
 
 export type CampaignStatus = "RUNNING" | "PAUSED" | "COMPLETED";
 
@@ -34,7 +34,8 @@ export interface CreateCampaignInput {
   resumeId: string;
   recipientIds: string[];
   aiProvider: string;
-  emailpromptSetId: string;
+  emailPromptSetId: string;
+  subject?: string;
   dailyLimit: number;
 }
 
@@ -47,7 +48,7 @@ export interface CampaignSSEEvent {
 }
 
 export interface CampaignDetailsResponse extends EmailCampaign {
-  recipients: Recipient[];
+  recipients: CampaignRecipient[];
   sentEmails: SentEmail[];
   emailPromptSet: EmailPromptSet | null;
 }

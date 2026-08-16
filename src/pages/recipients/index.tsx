@@ -84,10 +84,10 @@ export default function RecipientsPage() {
                   <TableRow>
                     <TableHead>Company</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Error</TableHead>
-                    <TableHead>Sent At</TableHead>
-                    <TableHead>Campaign ID</TableHead>
+                    <TableHead>Campaigns</TableHead>
+                    <TableHead>Emails Sent</TableHead>
+                    <TableHead>Latest Status</TableHead>
+                    <TableHead>Last Sent</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -95,12 +95,12 @@ export default function RecipientsPage() {
                     <TableRow key={r.id}>
                       <TableCell className="font-medium">{r.companyEmail.companyName}</TableCell>
                       <TableCell>{r.companyEmail.email}</TableCell>
+                      <TableCell>{r.campaignCount}</TableCell>
+                      <TableCell>{r.sentCount}</TableCell>
                       <TableCell>
-                        <Badge variant={statusVariant(r.status)}>{r.status}</Badge>
+                        {r.latestStatus ? <Badge variant={statusVariant(r.latestStatus)}>{r.latestStatus}</Badge> : <span className="text-xs text-muted-foreground">—</span>}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{r.error ?? "—"}</TableCell>
-                      <TableCell className="text-xs">{r.sentAt ? new Date(r.sentAt).toLocaleString() : "—"}</TableCell>
-                      <TableCell className="text-xs font-mono">{r.campaignId ? r.campaignId.slice(0, 8) + "…" : "—"}</TableCell>
+                      <TableCell className="text-xs">{r.lastSentAt ? new Date(r.lastSentAt).toLocaleString() : "—"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

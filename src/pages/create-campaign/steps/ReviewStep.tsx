@@ -8,10 +8,11 @@ interface ReviewStepProps {
   selectedRecipientIds: string[];
   selectedAiProvider: AiProviderName | null;
   promptSet: EmailPromptSet | undefined;
+  subject: string;
   dailyLimit: number;
 }
 
-export function ReviewStep({ resume, selectedRecipientIds, selectedAiProvider, promptSet, dailyLimit }: ReviewStepProps) {
+export function ReviewStep({ resume, selectedRecipientIds, selectedAiProvider, promptSet, subject, dailyLimit }: ReviewStepProps) {
   const promptPreview = promptSet ? (promptSet.aiPrompt.length > 60 ? promptSet.aiPrompt.slice(0, 60) + "..." : promptSet.aiPrompt) : "—";
 
   return (
@@ -41,6 +42,10 @@ export function ReviewStep({ resume, selectedRecipientIds, selectedAiProvider, p
             <div className="flex items-center justify-between px-4 py-3">
               <span className="text-sm text-muted-foreground">Prompt Template</span>
               <span className="text-sm font-medium truncate max-w-xs">{promptPreview}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-muted-foreground">Subject</span>
+              <span className="text-sm font-medium truncate max-w-xs">{subject.trim() || "Hello from Knock Knock (default)"}</span>
             </div>
             <div className="flex items-center justify-between px-4 py-3">
               <span className="text-sm text-muted-foreground">Daily Limit</span>

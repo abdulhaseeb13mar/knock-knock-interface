@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "../../components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCreateEmailPromptSetMutation, useDeleteEmailPromptSetMutation, useEmailPromptSetsQuery, useUpdateEmailPromptSetMutation } from "@/hooks/api";
 import type { EmailPromptSet } from "@/types/api";
@@ -16,17 +17,21 @@ export default function PromptsPage() {
   const deleteMutation = useDeleteEmailPromptSetMutation();
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [subject, setSubject] = useState("");
   const [emailFormat, setEmailFormat] = useState("");
   const [aiPrompt, setAiPrompt] = useState("");
 
   const resetForm = () => {
     setEditingId(null);
+    setSubject("");
     setEmailFormat("");
     setAiPrompt("");
   };
 
   const handleEdit = (set: EmailPromptSet) => {
     setEditingId(set.id);
+    setSubject(set.subject ?? "");
+    // Legacy rows may still carry the backticks the old form used to add
     let rawFormat = set.emailFormat;
     if (rawFormat.startsWith("`") && rawFormat.endsWith("`")) {
       rawFormat = rawFormat.slice(1, -1);
@@ -42,17 +47,21 @@ export default function PromptsPage() {
       return;
     }
 
-    const payloadEmailFormat = emailFormat.startsWith("`") && emailFormat.endsWith("`") ? emailFormat : `\`${emailFormat}\``;
+    const trimmedSubject = subject.trim();
 
     try {
       if (editingId) {
         await updateMutation.mutateAsync({
           id: editingId,
-          input: { emailFormat: payloadEmailFormat, aiPrompt },
+          input: { subject: trimmedSubject, emailFormat, aiPrompt },
         });
         toast.success("Prompt set updated");
       } else {
-        await createMutation.mutateAsync({ emailFormat: payloadEmailFormat, aiPrompt });
+        await createMutation.mutateAsync({
+          ...(trimmedSubject ? { subject: trimmedSubject } : {}),
+          emailFormat,
+          aiPrompt,
+        });
         toast.success("Prompt set created");
       }
       resetForm();
@@ -89,6 +98,18 @@ export default function PromptsPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="subject">Email Subject</Label>
+              <Input
+                id="subject"
+                placeholder="Hello from Knock Knock"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Used as the subject line for every email in a campaign using this prompt set. Leave blank to use the default.
+              </p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="emailFormat">Sample Email / Format</Label>
               <textarea
@@ -142,6 +163,7 @@ export default function PromptsPage() {
               <Card key={set.id}>
                 <CardContent className="p-4 flex items-start justify-between gap-4">
                   <div className="space-y-1">
+                    <div className="font-medium text-sm">Subject: {set.subject?.trim() || "Hello from Knock Knock (default)"}</div>
                     <div className="font-medium text-sm">Format: {displayFormat}</div>
                     <div className="text-xs text-muted-foreground line-clamp-2">{set.aiPrompt}</div>
                   </div>

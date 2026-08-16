@@ -89,7 +89,7 @@ const steps: OnboardingStep[] = [
   },
   {
     title: "Add AI Keys",
-    description: "Configure at least one AI provider (OpenAI, Anthropic, or Grok) to generate personalized emails.",
+    description: "Configure at least one AI provider (OpenAI, Anthropic, Grok, or DeepSeek) to generate personalized emails.",
     href: "/ai-keys",
     icon: <Key className="size-5" />,
     useCompleted: useAiKeysCompleted,

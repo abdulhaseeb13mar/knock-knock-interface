@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGmailConnectMutation, useGmailRevokeMutation, useGmailStatusQuery } from "@/hooks/api";
 import { ApiError } from "@/services/api-client";
-import { Check, Mail } from "lucide-react";
+import { AlertTriangle, Check, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function EmailProviderPage() {
@@ -16,6 +16,8 @@ export default function EmailProviderPage() {
   const { data: gmailStatus, isLoading: statusLoading, refetch: refetchStatus } = useGmailStatusQuery();
 
   const isIntegrated = gmailStatus?.integrated ?? false;
+  const isGrantValid = gmailStatus?.grantValid ?? false;
+  const isGrantExpired = isIntegrated && !isGrantValid;
 
   async function handleConnect() {
     setLoading(true);
@@ -55,19 +57,38 @@ export default function EmailProviderPage() {
             Gmail Integration
           </CardTitle>
           <CardDescription>
-            {isIntegrated ? "Your Gmail account is connected and ready to send emails." : "Connect your Gmail account to send emails through OAuth."}
+            {isGrantExpired
+              ? "Your Gmail access has expired. Reconnect to resume sending emails."
+              : isIntegrated
+                ? "Your Gmail account is connected and ready to send emails."
+                : "Connect your Gmail account to send emails through OAuth."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {isIntegrated ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-green-600">
-                <Check className="size-5" />
-                <span className="font-medium">Gmail integrated</span>
+              {isGrantExpired ? (
+                <div className="flex items-center gap-2 text-amber-600">
+                  <AlertTriangle className="size-5" />
+                  <span className="font-medium">Gmail access expired</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-green-600">
+                  <Check className="size-5" />
+                  <span className="font-medium">Gmail integrated</span>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {isGrantExpired && (
+                  <Button onClick={handleConnect} disabled={loading || statusLoading}>
+                    {loading ? <Spinner size="sm" className="mr-2" /> : <Mail className="size-4 mr-2" />}
+                    {loading ? "Redirecting…" : "Reconnect Gmail"}
+                  </Button>
+                )}
+                <Button variant="outline" onClick={handleRevoke} disabled={statusLoading || revokeLoading}>
+                  {revokeLoading ? "Revoking…" : "Revoke access"}
+                </Button>
               </div>
-              <Button variant="outline" onClick={handleRevoke} disabled={statusLoading || revokeLoading}>
-                {revokeLoading ? "Revoking…" : "Revoke access"}
-              </Button>
             </div>
           ) : (
             <Button onClick={handleConnect} disabled={loading || statusLoading}>

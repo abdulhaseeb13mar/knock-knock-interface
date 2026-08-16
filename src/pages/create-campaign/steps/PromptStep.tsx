@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { useCreateEmailPromptSetMutation, useEmailPromptSetsQuery } from "@/hooks/api";
@@ -15,6 +16,7 @@ interface PromptStepProps {
 
 export function PromptStep({ selectedPromptSetId, onSelect }: PromptStepProps) {
   const [showAdd, setShowAdd] = useState(false);
+  const [newSubject, setNewSubject] = useState("");
   const [newEmailFormat, setNewEmailFormat] = useState("");
   const [newAiPrompt, setNewAiPrompt] = useState("");
 
@@ -26,10 +28,14 @@ export function PromptStep({ selectedPromptSetId, onSelect }: PromptStepProps) {
       toast.error("Fill in both fields");
       return;
     }
-    const payloadFormat = newEmailFormat.startsWith("`") && newEmailFormat.endsWith("`") ? newEmailFormat : `\`${newEmailFormat}\``;
     try {
-      await createPromptMutation.mutateAsync({ emailFormat: payloadFormat, aiPrompt: newAiPrompt });
+      await createPromptMutation.mutateAsync({
+        ...(newSubject.trim() ? { subject: newSubject.trim() } : {}),
+        emailFormat: newEmailFormat,
+        aiPrompt: newAiPrompt,
+      });
       toast.success("Prompt set created");
+      setNewSubject("");
       setNewEmailFormat("");
       setNewAiPrompt("");
       setShowAdd(false);
@@ -103,6 +109,10 @@ export function PromptStep({ selectedPromptSetId, onSelect }: PromptStepProps) {
 
         {showAdd && (
           <div className="border rounded-lg p-4 space-y-3">
+            <div className="space-y-2">
+              <Label>Email Subject</Label>
+              <Input placeholder="Hello from Knock Knock" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} />
+            </div>
             <div className="space-y-2">
               <Label>Sample Email / Format</Label>
               <textarea

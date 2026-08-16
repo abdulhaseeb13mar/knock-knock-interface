@@ -1,3 +1,4 @@
+import { GmailGrantWarning } from "@/components/GmailGrantWarning";
 import { Sidebar } from "@/components/Sidebar";
 import { Outlet } from "@tanstack/react-router";
 
@@ -9,6 +10,7 @@ export function DashboardLayout() {
         {/* Mobile top bar spacer */}
         <div className="h-14 lg:h-0 shrink-0" />
         <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full flex-1">
+          <GmailGrantWarning />
           <Outlet />
         </main>
       </div>

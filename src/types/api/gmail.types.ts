@@ -4,4 +4,6 @@ export interface GmailConnectResponse {
 
 export interface GmailStatusResponse {
   integrated: boolean;
+  grantValid: boolean;
+  reason: string | null;
 }

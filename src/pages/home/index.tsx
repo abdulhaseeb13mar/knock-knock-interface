@@ -12,7 +12,7 @@ const features = [
   {
     icon: <Key className="size-6" />,
     title: "AI-Powered Emails",
-    description: "Use OpenAI, Anthropic, or Grok to generate highly personalized outreach emails.",
+    description: "Use OpenAI, Anthropic, Grok, or DeepSeek to generate highly personalized outreach emails.",
   },
   {
     icon: <FileText className="size-6" />,

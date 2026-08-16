@@ -1,4 +1,4 @@
-export type AiProviderName = "openai" | "anthropic" | "grok";
+export type AiProviderName = "openai" | "anthropic" | "grok" | "deepseek";
 
 export interface AiKeyRecord {
   provider: AiProviderName;

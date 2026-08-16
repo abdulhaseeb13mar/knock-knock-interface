@@ -11,6 +11,7 @@ export type {
   RecipientStatus,
   CompanyEmail,
   Recipient,
+  CampaignRecipient,
   ImportResponse,
   CampaignStatus,
   EmailCampaign,

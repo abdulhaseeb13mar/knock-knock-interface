@@ -6,9 +6,12 @@ import { Settings } from "lucide-react";
 interface SettingsStepProps {
   dailyLimit: number;
   onChangeDailyLimit: (limit: number) => void;
+  subject: string;
+  onChangeSubject: (subject: string) => void;
+  promptSetSubject: string | null;
 }
 
-export function SettingsStep({ dailyLimit, onChangeDailyLimit }: SettingsStepProps) {
+export function SettingsStep({ dailyLimit, onChangeDailyLimit, subject, onChangeSubject, promptSetSubject }: SettingsStepProps) {
   return (
     <Card>
       <CardHeader>
@@ -16,10 +19,26 @@ export function SettingsStep({ dailyLimit, onChangeDailyLimit }: SettingsStepPro
           <Settings className="size-5" />
           Campaign Settings
         </CardTitle>
-        <CardDescription>Configure how many emails to send per day.</CardDescription>
+        <CardDescription>Configure the subject line and how many emails to send per day.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="max-w-xs space-y-3">
+        <div className="max-w-md space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="subject">Email Subject</Label>
+            <Input
+              id="subject"
+              placeholder="Hello from Knock Knock"
+              value={subject}
+              onChange={(e) => onChangeSubject(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              {promptSetSubject
+                ? "Pre-filled from the selected prompt set. Editing it here applies to this campaign only."
+                : "Leave blank to use the default subject."}{" "}
+              The AI rewrites this for each recipient, so every email gets its own variation.
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="dailyLimit">Daily Email Limit</Label>
             <Input
