@@ -13,7 +13,7 @@ interface SettingsStepProps {
   promptSetSubject: string | null;
 }
 
-export function SettingsStep({ dailyLimit, onChangeDailyLimit }: SettingsStepProps) {
+export function SettingsStep({ dailyLimit, onChangeDailyLimit, subject, onChangeSubject, promptSetSubject }: SettingsStepProps) {
   const [displayValue, setDisplayValue] = useState(String(dailyLimit));
 
   useEffect(() => {
